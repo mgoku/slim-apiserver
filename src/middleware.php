@@ -33,7 +33,7 @@ $app->add(new \Slim\Middleware\JwtAuthentication([
 ]));
 
 /*********************************************************************/
-/*  Semua path di bawah /mobile diproteksi dengan JWT dg key admin
+/*  Semua path di bawah /mobile diproteksi dengan JWT dg key mobile
 /*********************************************************************/
 $app->add(new \Slim\Middleware\JwtAuthentication([
     "secret" => $app->getContainer()->get('settings')['jwt']['mobile'],
