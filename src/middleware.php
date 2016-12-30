@@ -4,7 +4,7 @@
 // e.g: $app->add(new \Slim\Csrf\Guard);
 
 /****************************************************************/
-/*  Middleware untuk cek apakan user yang login adalah type ADMIN
+/*  Middleware untuk cek apakah user yang login adalah type ADMIN
 /****************************************************************/
 $checkAdmin = function ($request, $response, $next) {
 
