@@ -5,50 +5,7 @@
 /* Parameter yang harus dikirim adalah username dan password */
 /* Jika login berhasil, akan memberi response dengan status 200 dan data token JWT */
 /* Jika login gagal, akan memberi response dengan status 403 */
-$app->post('/login', function ($request, $response, $args) {
-
-    $user = $request->getParsedBody();
-
-    /* Sanitasi data hanya dengan ditrim. Butuh yang lebih canggih lagi kalau ada */
-    $username = trim($user["username"]);
-    $password = trim($user["password"]);
-
-    if ((!empty($username)) && (!empty($password))) {
-
-        $loggedin_user = $this->database->select("users", ["username", "email", "password", "type"], ["OR" => ["username" => $username, "email" => $username]]);
-
-        if ($loggedin_user && password_verify($password, $loggedin_user[0]["password"])) {
-
-            /* Inisialisasi generator token dengan key admin */
-            $getToken = $this->jwtadmin;
-
-            /* Inisialisasi generator token dengan key mobile */
-            // $getToken = $this->jwtmobile;
-
-            return $response
-            ->withHeader('Content-type','application/json')
-            ->withStatus(200)
-            ->write(json_encode(
-                [
-                    "token" => $getToken($username, $loggedin_user[0]["type"]), /* Ini bikin token, dg param username dan type */
-                    "username" => $loggedin_user[0]["username"],
-                    "email" => $loggedin_user[0]["email"],
-                    "type" => $loggedin_user[0]["type"]  /* Kirimkan juga sebagai response, siapa tahu dibutuhkan di client side */
-                ]
-            ));
-        } else {
-            return $response
-            ->withHeader('Content-type','application/json')
-            ->withStatus(403)
-            ->write(json_encode("Unauthorized"));
-        }
-    } else {
-        return $response
-            ->withHeader('Content-type','application/json')
-            ->withStatus(403)
-            ->write(json_encode("Unauthorized"));
-    }
-});
+$app->post('/login', "AuthController:login");
 
 
 /*

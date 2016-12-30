@@ -63,3 +63,9 @@ $container['jwtmobile'] = function ($c) {
     $token = JWT::encode($data, $settings['mobile']);
     return $token;
 };
+
+
+/* Buat DIC untuk controller */
+$container[AuthController] = function ($c) {
+    return new mgoku\apiserver\controller\AuthController($c);
+};
