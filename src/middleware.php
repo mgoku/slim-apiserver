@@ -21,3 +21,22 @@ $checkAdmin = function ($request, $response, $next) {
             ), JSON_NUMERIC_CHECK));
     }
 };
+
+
+/*********************************************************************/
+/*  Semua path di bawah /admin diproteksi dengan JWT dg key admin
+/*********************************************************************/
+$app->add(new \Slim\Middleware\JwtAuthentication([
+    "secret" => $app->getContainer()->get('settings')['jwt']['admin'],
+    "secure" => false,
+    "path"   => ["/admin"]
+]));
+
+/*********************************************************************/
+/*  Semua path di bawah /mobile diproteksi dengan JWT dg key admin
+/*********************************************************************/
+$app->add(new \Slim\Middleware\JwtAuthentication([
+    "secret" => $app->getContainer()->get('settings')['jwt']['mobile'],
+    "secure" => false,
+    "path"   => ["/mobile"]
+]));
