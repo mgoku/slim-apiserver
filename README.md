@@ -7,11 +7,9 @@ Ini adalah Skeleton server Restful API menggunakan Slim 3
 * Clone repo ini
 * Point your virtual host document root to your new application's `public/` directory.
 * Ensure `logs/` is web writeable.
-* Jalankan.
+* Untuk install dependency, jalankan:
 
-	composer install
-
-  untuk install dependency.
+	`composer install`
 
 * Buat database kemudian import `sql/database.sql` untuk membuat tabel users
 * Edit konfigurasi di file `src/settings.php`
