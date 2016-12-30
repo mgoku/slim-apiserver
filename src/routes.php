@@ -131,16 +131,18 @@ $app->get('/tz', function ($request, $response, $args) {
 /*****************************************************************************************/
 /*    Route untuk seed data user.
 /*    PASTIKAN DISABLE ROUTE INI ini di production server
+/*    Parameter yang harus dikirimkan : username, email, password, type ---> semua text
 /*****************************************************************************************/
 $app->get('/adduser', function ($request, $response, $args) {
     $user = $request->getQueryParams();
     $username = trim($user["username"]);
+    $email = trim($user["email"]);
     $password = trim($user["password"]);
     $type = trim($user["type"]);
 
     if ((!empty($username)) && (!empty($password)))
     {
-        $this->database->insert("users", ["username" => $username, "password" => password_hash($password, PASSWORD_DEFAULT), "type" => $type, "created_at" => date('c'), "updated_at" => time()]);
+        $this->database->insert("users", ["username" => $username, "email" => $email, "password" => password_hash($password, PASSWORD_DEFAULT), "type" => $type, "created_at" => date('c'), "updated_at" => time(), "updated_by" => 0]);
     }
 });
 

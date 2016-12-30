@@ -11,8 +11,8 @@ Ini adalah Skeleton server Restful API menggunakan Slim 3
 
 	`composer install`
 
-* Buat database kemudian import `sql/database.sql` untuk membuat tabel users
-* Edit konfigurasi di file `src/settings.php`
+* Buat database kemudian import `sql/slimapiserver.sql` untuk membuat tabel users
+* Copy file `src/settings.php.example` menjadi `src/settings.php` kemudian edit sesuai konfigurasi yang diinginkan
 
 ## Framework yang dipakai
 
@@ -22,5 +22,5 @@ Ini adalah Skeleton server Restful API menggunakan Slim 3
 
 ## Contoh - Contoh
 
-* Untuk create user baru, panggil `http://localhost/slim/apiserver/public/adduser?username=admin&password=password&type=ADMIN`
+* Untuk create user baru, panggil `http://localhost/slim/apiserver/public/adduser?username=admin&email=admin@localhost.com&password=password&type=ADMIN`
 * Untuk cek setting timezone, panggil `http://localhost/slim/apiserver/public/tz`
