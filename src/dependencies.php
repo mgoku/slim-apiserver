@@ -31,7 +31,7 @@ $container['database'] = function ($c) {
 // JWT Token generator with admin key
 $container['jwtadmin'] = function ($c) {
 
-    return function ($username, $uscope) use ($c) {
+    return function ($username, $type) use ($c) {
         $settings = $c->get('settings')['jwt'];
 
         $data = array(
@@ -39,9 +39,8 @@ $container['jwtadmin'] = function ($c) {
             "aud" => "eguru-admin",
             "exp" => time() + 14400,
             "uid" => substr( md5(rand()), 0, 10),
-            "type" => "IS_ADMIN",
-            "user" => $username,
-            "uscope" => $uscope
+            "username" => $username,
+            "type" => $type
         );
 
         $token = JWT::encode($data, $settings['admin']);
