@@ -1,10 +1,108 @@
 <?php
 // Routes
 
+/* Contoh route untuk login, dan mendapatkan token JWT yang dibuat menggunakan key admin */
+/* Parameter yang harus dikirim adalah username dan password */
+/* Jika login berhasil, akan memberi response dengan status 200 dan data token JWT */
+/* Jika login gagal, akan memberi response dengan status 403 */
+$app->post('/login', function ($request, $response, $args) {
+
+    $user = $request->getParsedBody();
+
+    /* Sanitasi data hanya dengan ditrim. Butuh yang lebih canggih lagi kalau ada */
+    $username = trim($user["username"]);
+    $password = trim($user["password"]);
+
+    if ((!empty($username)) && (!empty($password))) {
+
+        $loggedin_user = $this->database->select("users", ["username", "password", "type"], ["username" => $username]);
+
+        if ($loggedin_user && password_verify($password, $loggedin_user[0]["password"])) {
+
+            $getToken = $this->jwtadmin;
+
+            return $response
+            ->withHeader('Content-type','application/json')
+            ->withStatus(200)
+            ->write(json_encode(
+                [
+                    "token" => $getToken($username, $loggedin_user[0]["type"]), /* Ini bikin token, dg param username dan type */
+                    "username" => $username,
+                    "type" => $loggedin_user[0]["type"]  /* Kirimkan juga sebagai response, siapa tahu dibutuhkan di client side */
+                ]
+            ));
+        } else {
+            return $response
+            ->withHeader('Content-type','application/json')
+            ->withStatus(403)
+            ->write(json_encode("Unauthorized"));
+        }
+    } else {
+        return $response
+            ->withHeader('Content-type','application/json')
+            ->withStatus(403)
+            ->write(json_encode("Unauthorized"));
+    }
+});
 
 
+/*
+    Route berikut, hanya bisa diakses jika sudah login dan mendapat token JWT yang digenerate dengan key admin
+*/
+$app->group('/admin', function () use ($app, $checkAdmin) {
 
 
+    /* Route ini bisa diakses oleh user yang sudah login, meskipun type dia bukan ADMIN */
+    $app->get('/user', function ($request, $response, $args) {
+
+        $params = $request->getQueryParams();
+        $filter = [];
+
+        if ((isset($params["id"])) && (strlen(trim($params["id"])) > 0)) {
+            $filter = ["id" => trim($params["id"])];
+        }
+
+        $result = $this->database->select("users", ["id", "username", "type", "data", "created_at", "updated_at"], $filter);
+
+        return $response
+            ->withHeader('Content-type','application/json')
+            ->withStatus(200)
+            ->write(json_encode(array("data" => $result), JSON_NUMERIC_CHECK));
+    });
+
+
+    /* Route ini hanya bisa diakses oleh user yang sudah login dan type ADMIN */
+    $app->delete('/user', function ($request, $response, $args) {
+
+        $data = $request->getParsedBody();
+
+        if ((isset($data["id"])) && (strlen(trim($data["id"])) > 0)) {
+            /* Hanya boleh hapus jika kirim id */
+            $result = $this->database->delete("users", ["id" => trim($data["id"])]);
+
+            if ($result) {
+                $status = 200;
+            } else {
+                $status = 404;
+            }
+        } else {
+            /* Jika tidak kirim id, tidak boleh hapus */
+            $status = 400;
+        }
+
+        return $response
+            ->withHeader('Content-type','application/json')
+            ->withStatus($status)
+            ->write(json_encode($data));
+
+    })->add($checkAdmin);
+
+
+})->add(new \Slim\Middleware\JwtAuthentication([
+    "secret" => $app->getContainer()->get('settings')['jwt']['admin'],
+    "secure" => false,
+    "path"   => ["/admin"]
+]));
 
 
 
