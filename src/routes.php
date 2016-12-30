@@ -19,7 +19,11 @@ $app->post('/login', function ($request, $response, $args) {
 
         if ($loggedin_user && password_verify($password, $loggedin_user[0]["password"])) {
 
+            /* Inisialisasi generator token dengan key admin */
             $getToken = $this->jwtadmin;
+
+            /* Inisialisasi generator token dengan key mobile */
+            // $getToken = $this->jwtmobile;
 
             return $response
             ->withHeader('Content-type','application/json')
@@ -98,12 +102,33 @@ $app->group('/admin', function () use ($app, $checkAdmin) {
 
     })->add($checkAdmin);
 
+});
 
-})->add(new \Slim\Middleware\JwtAuthentication([
-    "secret" => $app->getContainer()->get('settings')['jwt']['admin'],
-    "secure" => false,
-    "path"   => ["/admin"]
-]));
+/*
+    Route berikut, hanya bisa diakses jika sudah login dan mendapat token JWT yang digenerate dengan key mobile
+*/
+$app->group('/mobile', function () use ($app, $checkAdmin) {
+
+
+    /* Route ini bisa diakses oleh user yang sudah login, meskipun type dia bukan ADMIN */
+    $app->get('/user', function ($request, $response, $args) {
+
+        $params = $request->getQueryParams();
+        $filter = [];
+
+        if ((isset($params["id"])) && (strlen(trim($params["id"])) > 0)) {
+            $filter = ["id" => trim($params["id"])];
+        }
+
+        $result = $this->database->select("users", ["id", "username", "type", "data", "created_at", "updated_at"], $filter);
+
+        return $response
+            ->withHeader('Content-type','application/json')
+            ->withStatus(200)
+            ->write(json_encode(array("data" => $result), JSON_NUMERIC_CHECK));
+    });
+
+});
 
 
 
