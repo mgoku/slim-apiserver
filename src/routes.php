@@ -15,7 +15,7 @@ $app->post('/login', function ($request, $response, $args) {
 
     if ((!empty($username)) && (!empty($password))) {
 
-        $loggedin_user = $this->database->select("users", ["username", "password", "type"], ["username" => $username]);
+        $loggedin_user = $this->database->select("users", ["username", "email", "password", "type"], ["OR" => ["username" => $username, "email" => $username]]);
 
         if ($loggedin_user && password_verify($password, $loggedin_user[0]["password"])) {
 
@@ -27,7 +27,8 @@ $app->post('/login', function ($request, $response, $args) {
             ->write(json_encode(
                 [
                     "token" => $getToken($username, $loggedin_user[0]["type"]), /* Ini bikin token, dg param username dan type */
-                    "username" => $username,
+                    "username" => $loggedin_user[0]["username"],
+                    "email" => $loggedin_user[0]["email"],
                     "type" => $loggedin_user[0]["type"]  /* Kirimkan juga sebagai response, siapa tahu dibutuhkan di client side */
                 ]
             ));
