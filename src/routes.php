@@ -52,7 +52,10 @@ $app->post('/login', function ($request, $response, $args) {
 
 
 /*
-    Route berikut, hanya bisa diakses jika sudah login dan mendapat token JWT yang digenerate dengan key admin
+    Route berikut, hanya bisa diakses jika sudah login dan
+    mendapat token JWT yang digenerate dengan key admin.
+
+    Settingan ini diatur di file src/middleware.php
 */
 $app->group('/admin', function () use ($app, $checkAdmin) {
 
@@ -105,7 +108,10 @@ $app->group('/admin', function () use ($app, $checkAdmin) {
 });
 
 /*
-    Route berikut, hanya bisa diakses jika sudah login dan mendapat token JWT yang digenerate dengan key mobile
+    Route berikut, hanya bisa diakses jika sudah login dan mendapat
+    token JWT yang digenerate dengan key mobile.
+
+    Settingan ini diatur di file src/middleware.php
 */
 $app->group('/mobile', function () use ($app, $checkAdmin) {
 
