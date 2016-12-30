@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Dec 30, 2016 at 02:29 AM
+-- Generation Time: Dec 30, 2016 at 06:15 AM
 -- Server version: 10.0.22-MariaDB
 -- PHP Version: 7.0.14
 
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `eguru`
+-- Database: `slimapiserver`
 --
 
 -- --------------------------------------------------------
@@ -29,11 +29,13 @@ SET time_zone = "+00:00";
 CREATE TABLE `users` (
   `id` int(10) UNSIGNED NOT NULL,
   `username` varchar(60) NOT NULL,
+  `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `type` varchar(32) NOT NULL,
   `data` text,
   `created_at` datetime NOT NULL,
-  `updated_at` int(10) UNSIGNED NOT NULL
+  `updated_at` int(10) UNSIGNED NOT NULL,
+  `updated_by` int(10) UNSIGNED NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -45,7 +47,8 @@ CREATE TABLE `users` (
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `uname` (`username`);
+  ADD UNIQUE KEY `uname` (`username`),
+  ADD UNIQUE KEY `email` (`email`);
 
 --
 -- AUTO_INCREMENT for dumped tables
