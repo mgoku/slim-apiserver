@@ -129,7 +129,7 @@ $app->get('/adduser', function ($request, $response, $args) {
     $password = trim($user["password"]);
     $type = trim($user["type"]);
 
-    if ((!empty($username)) && (!empty($password)))
+    if ( preg_match("/^[\w\d]+$/i", $username) && preg_match("/^[\w\d]+$/i", $password) && filter_var($email, FILTER_VALIDATE_EMAIL) )
     {
         $this->database->insert("users", ["username" => $username, "email" => $email, "password" => password_hash($password, PASSWORD_DEFAULT), "type" => $type, "created_at" => date('c'), "updated_at" => time(), "updated_by" => 0]);
     }
