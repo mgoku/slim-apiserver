@@ -5,6 +5,12 @@ namespace mgoku\apiserver\controller;
 class AuthController extends BaseController
 {
 
+    /***************************************************************************************
+    ** Login user
+    ** Data yang harus dikirim : username (bisa berisi usernane atau email), password
+    ** Jika sukses, status : 200 + kirim token
+    ** Jika gagal, status : 403
+    ****************************************************************************************/
     public function login($request, $response, $args)
     {
         $user = $request->getParsedBody();
