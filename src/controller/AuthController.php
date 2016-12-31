@@ -19,7 +19,9 @@ class AuthController extends BaseController
         $username = trim($user["username"]);
         $password = trim($user["password"]);
 
-        if (preg_match("/^[\w\d]+$/i", $username) && preg_match("/^[\w\d]+$/i", $password)) {
+        $valid_username = preg_match("/^[\w\d]+$/i", $username) || filter_var($username, FILTER_VALIDATE_EMAIL);
+
+        if ($valid_username && preg_match("/^[\w\d]+$/i", $password)) {
 
             $loggedin_user = $this->ci->database->select("users", ["username", "email", "password", "type"], ["OR" => ["username" => $username, "email" => $username]]);
 
