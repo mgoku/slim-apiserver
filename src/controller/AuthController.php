@@ -23,7 +23,7 @@ class AuthController extends BaseController
 
         if ($valid_username && preg_match("/^[\w\d]+$/i", $password)) {
 
-            $loggedin_user = $this->ci->database->select("users", ["username", "email", "password", "type"], ["OR" => ["username" => $username, "email" => $username]]);
+            $loggedin_user = $this->ci->database->select("users", ["id", "username", "email", "password", "type", "data"], ["OR" => ["username" => $username, "email" => $username]]);
 
             if ($loggedin_user && password_verify($password, $loggedin_user[0]["password"])) {
 
@@ -38,10 +38,18 @@ class AuthController extends BaseController
                 ->withStatus(200)
                 ->write(json_encode(
                     [
-                        "token" => $getToken($username, $loggedin_user[0]["type"]), /* Ini bikin token, dg param username dan type */
-                        "username" => $loggedin_user[0]["username"],
-                        "email" => $loggedin_user[0]["email"],
-                        "type" => $loggedin_user[0]["type"]  /* Kirimkan juga sebagai response, siapa tahu dibutuhkan di client side */
+                        /* Ini bikin token, dg param username dan type */
+                        "token" => $getToken($username, $loggedin_user[0]["type"]),
+
+                        /* Kirimkan juga data user, siapa tahu dibutuhkan di client side */
+                        /* Gak langsun kirimkan $loggedin_user karena di situ ada data password juga :-D */
+                        "user" => [
+                            "id" => $loggedin_user[0]["id"],
+                            "username" => $loggedin_user[0]["username"],
+                            "email" => $loggedin_user[0]["email"],
+                            "type" => $loggedin_user[0]["type"],
+                            "data" => $loggedin_user[0]["data"] ? json_decode($loggedin_user[0]["data"]) : null
+                        ]
                     ]
                 ));
             } else {
