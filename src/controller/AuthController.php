@@ -2,15 +2,8 @@
 
 namespace mgoku\apiserver\controller;
 
-class AuthController
+class AuthController extends BaseController
 {
-
-    protected $ci;
-
-    /* Init class dan inject container instance */
-    public function __construct ($ci) {
-        $this->ci = $ci;
-    }
 
     public function login($request, $response, $args)
     {
