@@ -67,11 +67,3 @@ $app->get('/tz', function ($request, $response, $args) {
 /*****************************************************************************************/
 $app->get('/adduser', "UserController:add");
 
-/*****************************************************************************************/
-/*    Default route dari slim.
-/*    Sebaiknya disable route ini di production, agar tidak ketahuan pakai slim.
-/*****************************************************************************************/
-$app->get('/info-slim', function ($request, $response, $args) {
-    $this->logger->info("Slim-Skeleton '/' route");
-    return $this->renderer->render($response, 'index.phtml', $args);
-});
