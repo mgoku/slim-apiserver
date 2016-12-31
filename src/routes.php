@@ -8,92 +8,35 @@
 $app->post('/login', "AuthController:login");
 
 
-/*
-    Route berikut, hanya bisa diakses jika sudah login dan
-    mendapat token JWT yang digenerate dengan key admin.
-
-    Settingan ini diatur di file src/middleware.php
-*/
+/***************************************************************************************
+**    Route berikut, hanya bisa diakses jika sudah login dan
+**    mendapat token JWT yang digenerate dengan key admin.
+**
+**    Settingan ini diatur di file src/middleware.php
+****************************************************************************************/
 $app->group('/admin', function () use ($app, $checkAdmin) {
 
 
     /* Route ini bisa diakses oleh user yang sudah login, meskipun type dia bukan ADMIN */
-    $app->get('/user', function ($request, $response, $args) {
-
-        $params = $request->getQueryParams();
-        $filter = [];
-
-        if ((isset($params["id"])) && (strlen(trim($params["id"])) > 0)) {
-            $filter = ["id" => trim($params["id"])];
-        }
-
-        $result = $this->database->select("users", ["id", "username", "type", "data", "created_at", "updated_at"], $filter);
-
-        return $response
-            ->withHeader('Content-type','application/json')
-            ->withStatus(200)
-            ->write(json_encode(array("data" => $result), JSON_NUMERIC_CHECK));
-    });
-
+    $app->get('/user', "UserController:get");
 
     /* Route ini hanya bisa diakses oleh user yang sudah login dan type ADMIN */
-    $app->delete('/user', function ($request, $response, $args) {
-
-        $data = $request->getParsedBody();
-
-        if ((isset($data["id"])) && (strlen(trim($data["id"])) > 0)) {
-            /* Hanya boleh hapus jika kirim id */
-            $result = $this->database->delete("users", ["id" => trim($data["id"])]);
-
-            if ($result) {
-                $status = 200;
-            } else {
-                $status = 404;
-            }
-        } else {
-            /* Jika tidak kirim id, tidak boleh hapus */
-            $status = 400;
-        }
-
-        return $response
-            ->withHeader('Content-type','application/json')
-            ->withStatus($status)
-            ->write(json_encode($data));
-
-    })->add($checkAdmin);
+    $app->delete('/user', "UserController:delete")->add($checkAdmin);
 
 });
 
-/*
-    Route berikut, hanya bisa diakses jika sudah login dan mendapat
-    token JWT yang digenerate dengan key mobile.
-
-    Settingan ini diatur di file src/middleware.php
-*/
+/***************************************************************************************
+**    Route berikut, hanya bisa diakses jika sudah login dan mendapat
+**    token JWT yang digenerate dengan key mobile.
+**
+**    Settingan ini diatur di file src/middleware.php
+****************************************************************************************/
 $app->group('/mobile', function () use ($app, $checkAdmin) {
 
-
     /* Route ini bisa diakses oleh user yang sudah login, meskipun type dia bukan ADMIN */
-    $app->get('/user', function ($request, $response, $args) {
-
-        $params = $request->getQueryParams();
-        $filter = [];
-
-        if ((isset($params["id"])) && (strlen(trim($params["id"])) > 0)) {
-            $filter = ["id" => trim($params["id"])];
-        }
-
-        $result = $this->database->select("users", ["id", "username", "type", "data", "created_at", "updated_at"], $filter);
-
-        return $response
-            ->withHeader('Content-type','application/json')
-            ->withStatus(200)
-            ->write(json_encode(array("data" => $result), JSON_NUMERIC_CHECK));
-    });
+    $app->get('/user', "UserController:get");
 
 });
-
-
 
 
 /*****************************************************************************************/
@@ -122,18 +65,7 @@ $app->get('/tz', function ($request, $response, $args) {
 /*    PASTIKAN DISABLE ROUTE INI ini di production server
 /*    Parameter yang harus dikirimkan : username, email, password, type ---> semua text
 /*****************************************************************************************/
-$app->get('/adduser', function ($request, $response, $args) {
-    $user = $request->getQueryParams();
-    $username = trim($user["username"]);
-    $email = trim($user["email"]);
-    $password = trim($user["password"]);
-    $type = trim($user["type"]);
-
-    if ( preg_match("/^[\w\d]+$/i", $username) && preg_match("/^[\w\d]+$/i", $password) && filter_var($email, FILTER_VALIDATE_EMAIL) )
-    {
-        $this->database->insert("users", ["username" => $username, "email" => $email, "password" => password_hash($password, PASSWORD_DEFAULT), "type" => $type, "created_at" => date('c'), "updated_at" => time(), "updated_by" => 0]);
-    }
-});
+$app->get('/adduser', "UserController:add");
 
 /*****************************************************************************************/
 /*    Default route dari slim.
