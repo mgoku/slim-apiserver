@@ -24,3 +24,7 @@ Ini adalah Skeleton server Restful API menggunakan Slim 3
 
 * Untuk create user baru, panggil `http://localhost/slim/apiserver/public/adduser?username=admin&email=admin@localhost.com&password=password&type=ADMIN`
 * Untuk cek setting timezone, panggil `http://localhost/slim/apiserver/public/tz`
+
+## TEST CASE
+
+* ini sekadar latihan pull request
