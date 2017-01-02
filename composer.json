@@ -14,7 +14,6 @@
     "require": {
         "php": ">=5.5.0",
         "slim/slim": "^3.1",
-        "slim/php-view": "^2.0",
         "monolog/monolog": "^1.17",
         "tuupola/slim-jwt-auth": "^2.3",
         "catfan/Medoo": "^1.1",
@@ -31,6 +30,11 @@
 	"scripts": {
         "start": "php -S 0.0.0.0:8080 -t public public/index.php",
         "test": "phpunit"
-	}
+	},
+    "autoload": {
+        "psr-4": {
+            "mgoku\\apiserver\\" : "src"
+        }
+    }
 
 }

@@ -7,12 +7,6 @@ use \Firebase\JWT\JWT;
 
 $container = $app->getContainer();
 
-// view renderer
-$container['renderer'] = function ($c) {
-    $settings = $c->get('settings')['renderer'];
-    return new Slim\Views\PhpRenderer($settings['template_path']);
-};
-
 // monolog
 $container['logger'] = function ($c) {
     $settings = $c->get('settings')['logger'];
@@ -62,4 +56,14 @@ $container['jwtmobile'] = function ($c) {
 
     $token = JWT::encode($data, $settings['mobile']);
     return $token;
+};
+
+
+/* Buat DIC untuk controller */
+$container[AuthController] = function ($c) {
+    return new mgoku\apiserver\controller\AuthController($c);
+};
+
+$container[UserController] = function ($c) {
+    return new mgoku\apiserver\controller\UserController($c);
 };
