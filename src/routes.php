@@ -23,6 +23,12 @@ $app->group('/admin', function () use ($app, $checkAdmin) {
     /* Route ini hanya bisa diakses oleh user yang sudah login dan type ADMIN */
     $app->delete('/user', "UserController:delete")->add($checkAdmin);
 
+    /* Untuk add user baru, pakai method POST */
+    $app->post('/user', "UserController:post")->add($checkAdmin);
+
+    /* Untuk edit, pakai method PUT */
+    $app->put('/user', "UserController:put")->add($checkAdmin);
+
 });
 
 /***************************************************************************************
