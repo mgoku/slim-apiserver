@@ -98,7 +98,7 @@ class UserController extends BaseController
         if ((!empty($username))  && (!empty($email)) && (!empty($password)) && (!empty($type)))
         {
             if ($password === $confirm_password) {
-                $this->database->insert("users", ["username" => $username, "email" => $email, "password" => password_hash($password, PASSWORD_DEFAULT), "type" => $type, "data" => $data, "created_at" => date('c'), "updated_at" => time(), "updated_by" => $request->getAttribute("token")->username]);
+                $this->ci->database->insert("users", ["username" => $username, "email" => $email, "password" => password_hash($password, PASSWORD_DEFAULT), "type" => $type, "data" => $data, "created_at" => date('c'), "updated_at" => time(), "updated_by" => $request->getAttribute("token")->username]);
 
                 $status = 200;
                 $msg = "User berhasil dibuat";
@@ -121,14 +121,24 @@ class UserController extends BaseController
 
     public function put($request, $response, $args)
     {
-        $data = $request->getParsedBody();
+        $request_data = $request->getParsedBody();
+
+        $id = trim($request_data["id"]);
+        $username = trim($request_data["username"]);
+        $email = trim($request_data["email"]);
+        $password = trim($request_data["password"]);
+        $confirm_password = trim($request_data["confirm_password"]);
+        $type = trim($request_data["type"]);
+
+        /* Data user, dikirim via request sebagai array, disimpan di database sebagai JSON */
+        $data = json_encode($request_data["data"]);
 
         /* Tidak boleh edit kalau tidak kirim id, bisa bahaya */
-        if ((isset($data["id"])) && (strlen(trim($data["id"])) > 0)) {
-            if (isset($data["password"]) && ((strlen(trim($data["confirm_password"]))) > 0) ) {
-                $result = $this->database->update("users", [ "type" => trim($data["type"]), "password" => password_hash(trim($data["password"]), PASSWORD_DEFAULT)], ["id" => trim($data["id"])]);
+        if ((isset($id)) && (strlen(trim($id)) > 0)) {
+            if (isset($password) && ((strlen($confirm_password)) > 0)) {
+                $result = $this->ci->database->update("users", [ "username" => $username, "email" => $email, "type" => $type, "password" => password_hash($password, PASSWORD_DEFAULT), "data" => $data, "updated_at" => time(), "updated_by" => $request->getAttribute("token")->username], ["id" => $id]);
             } else {
-                $result = $this->database->update("users", ["type" => trim($data["type"])], ["id" => trim($data["id"])]);
+                $result = $this->ci->database->update("users", [ "username" => $username, "email" => $email, "type" => $type, "data" => $data, "updated_at" => time(), "updated_by" => $request->getAttribute("token")->username], ["id" => $id]);
             }
 
             if ($result) {
