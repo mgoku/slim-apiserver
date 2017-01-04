@@ -78,4 +78,72 @@ class UserController extends BaseController
             ->write(json_encode($data));
     }
 
+
+    public function post($request, $response, $args)
+    {
+        $request_data = $request->getParsedBody();
+
+        $username = trim($request_data["username"]);
+        $email = trim($request_data["email"]);
+        $password = trim($request_data["password"]);
+        $confirm_password = trim($request_data["confirm_password"]);
+        $type = trim($request_data["type"]);
+
+        /* Data user, dikirim via request sebagai array, disimpan di database sebagai JSON */
+        $data = json_encode($request_data["data"]);
+
+        $status = 400;
+        $msg = "";
+
+        if ((!empty($username))  && (!empty($email)) && (!empty($password)) && (!empty($type)))
+        {
+            if ($password === $confirm_password) {
+                $this->database->insert("users", ["username" => $username, "email" => $email, "password" => password_hash($password, PASSWORD_DEFAULT), "type" => $type, "data" => $data, "created_at" => date('c'), "updated_at" => time(), "updated_by" => $request->getAttribute("token")->username]);
+
+                $status = 200;
+                $msg = "User berhasil dibuat";
+            } else {
+                $status = 417;
+                $msg = "Password dan Konfirmasi password tidak cocok";
+            }
+
+        } else {
+            $status = 400;
+            $msg = "Data kosong";
+        }
+
+        return $response
+            ->withHeader('Content-type','application/json')
+            ->withStatus($status)
+            ->write(json_encode(array("data" => $msg)));
+    }
+
+
+    public function put($request, $response, $args)
+    {
+        $data = $request->getParsedBody();
+
+        /* Tidak boleh edit kalau tidak kirim id, bisa bahaya */
+        if ((isset($data["id"])) && (strlen(trim($data["id"])) > 0)) {
+            if (isset($data["password"]) && ((strlen(trim($data["confirm_password"]))) > 0) ) {
+                $result = $this->database->update("users", [ "type" => trim($data["type"]), "password" => password_hash(trim($data["password"]), PASSWORD_DEFAULT)], ["id" => trim($data["id"])]);
+            } else {
+                $result = $this->database->update("users", ["type" => trim($data["type"])], ["id" => trim($data["id"])]);
+            }
+
+            if ($result) {
+                $status = 200;
+            } else {
+                $status = 404;
+            }
+        } else {
+            $status = 400;
+        }
+
+        return $response
+            ->withHeader('Content-type','application/json')
+            ->withStatus($status)
+            ->write(json_encode($data));
+    }
+
 }
