@@ -60,10 +60,10 @@ $container['jwtmobile'] = function ($c) {
 
 
 /* Buat DIC untuk controller */
-$container[AuthController] = function ($c) {
+$container['AuthController'] = function ($c) {
     return new mgoku\apiserver\controller\AuthController($c);
 };
 
-$container[UserController] = function ($c) {
+$container['UserController'] = function ($c) {
     return new mgoku\apiserver\controller\UserController($c);
 };
